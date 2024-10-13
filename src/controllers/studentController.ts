@@ -1,25 +1,36 @@
-import { Request, Response, NextFunction } from "express";
-import bcrypt from "bcrypt";
-import Student from "../models/studentModel";
-import Class from "../models/classModel";
-import { ResponseStructure } from "../types/response";
+import {Request, Response} from "express";
+import userModel from "../models/userModel.js";
 
-export const registerStudent = async (req: Request, res: Response, next: NextFunction) => {
+
+export const getMyGrades = async (req: Request, res: Response) => {
     try{
-        const {username, email, password, className} = req.body;
-
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const newClass = await new Class({name: className});
-        const newStudent = new Student({
-            username,
-            email,
-            password: hashedPassword,
-            class: newClass
-        });
-        await newStudent.save();
-        res.status(201).json(new ResponseStructure(true, newStudent));
+        const user = await userModel.findById(req.user?.id);
+        if(!user){
+            res.status(404).json({message: "User not found"});
+        }
+        else{
+            res.status(200).json({grades: user.grades, success: true})
+        }
     }
-    catch(error){
-        next(error);
+    catch(error: any){
+        res.status(500).json({message: error.message, success: false});
+    }
+};
+
+export const getAverageGrade = async (req: Request, res: Response) => {
+    try{
+        const user = await userModel.findById(req.user?.id);
+        if(!user){
+            res.status(404).json({message: "User not found"});
+        }
+        else{
+            const grades = user.grades.map(g => g.grade);
+            const avg = grades.length ? grades.reduce((acc: any, grade: any) => acc + grade, 0) / grades.length : 0;
+    
+            res.status(200).json({avg});
+        }
+    }
+    catch(error: any){
+        res.status(500).json({message: error.message, success: false});
     }
 }

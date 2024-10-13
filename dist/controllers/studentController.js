@@ -22,6 +22,10 @@ const registerStudent = (req, res, next) => __awaiter(void 0, void 0, void 0, fu
         const { username, email, password, className } = req.body;
         const hashedPassword = yield bcrypt_1.default.hash(password, 10);
         const newClass = yield new classModel_1.default({ name: className });
+        const findCLass = yield classModel_1.default.findOne({ newClass });
+        if (!findCLass) {
+            res.status(400).json(new response_1.ResponseStructure(false, {}, "Class doesn't exist"));
+        }
         const newStudent = new studentModel_1.default({
             username,
             email,

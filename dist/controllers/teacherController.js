@@ -22,14 +22,20 @@ const registerTeacher = (req, res, next) => __awaiter(void 0, void 0, void 0, fu
         const { username, email, password, className } = req.body;
         const hashedPassword = yield bcrypt_1.default.hash(password, 10);
         const newClass = yield new classModel_1.default({ name: className });
-        const newTeacher = new teacherModel_1.default({
-            username,
-            email,
-            password: hashedPassword,
-            class: newClass
-        });
-        yield newTeacher.save();
-        res.status(201).json(new response_1.ResponseStructure(true, newTeacher));
+        const checkClassExist = yield classModel_1.default.findOne({ newClass });
+        if (checkClassExist) {
+            res.status(403).json(new response_1.ResponseStructure(false, {}, "Class name already exists"));
+        }
+        else {
+            const newTeacher = new teacherModel_1.default({
+                username,
+                email,
+                password: hashedPassword,
+                class: newClass
+            });
+            yield newTeacher.save();
+            res.status(201).json(new response_1.ResponseStructure(true, newTeacher));
+        }
     }
     catch (error) {
         next(error);
