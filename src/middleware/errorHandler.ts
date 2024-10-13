@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { ResponseStructure } from "../types/response.js";
+import { ResponseStructure } from "../types/response";
 
 
 export const errorHandler = (

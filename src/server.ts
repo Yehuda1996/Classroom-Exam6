@@ -1,16 +1,17 @@
 import express from "express";
 import dotenv from "dotenv";
-import { errorHandler } from "./middleware/errorHandler.js";
-import connectDB from "./config/db.js";
+import { errorHandler } from "./middleware/errorHandler";
+import connectDB from "./config/db";
 import swaggerUi from "swagger-ui-express";
-import {swaggerSpec} from "./swagger.js";
+import {swaggerSpec} from "./swagger";
+import authRouter from "./routes/authRoute"
 
 
 dotenv.config();
 
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 
 
 // Middleware
@@ -20,7 +21,7 @@ connectDB();
 
 
 // Routes
-
+app.use('/auth', authRouter);
 
 
 

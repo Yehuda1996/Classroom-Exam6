@@ -1,9 +1,9 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
-import Teacher, { ITeacher } from '../models/teacherModel.js';
-import Student, { IStudent } from '../models/studentModel.js';
-import { ResponseStructure } from '../types/response.js';
+import Teacher, { ITeacher } from '../models/teacherModel';
+import Student, { IStudent } from '../models/studentModel';
+import { ResponseStructure } from '../types/response';
 
 
 export const registerTeacher = async (req: Request, res: Response, next: NextFunction) => {

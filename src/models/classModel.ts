@@ -1,11 +1,13 @@
 import mongoose, { Schema, Document, Types } from "mongoose";
 import { IStudent} from "./studentModel";
+import { ITeacher } from "./teacherModel";
 
 
 export interface IClass extends Document {
    _id: Types.ObjectId;
    name: string,
-   students?: IStudent[]
+   teacher?: string,
+   students?: string[]
 }
 
 
@@ -15,11 +17,15 @@ export const ClassSchema = new Schema<IClass> ({
        required: [true, "Classroom name is required"],
        unique: true
    },
-   students: {
-       type: Types.ObjectId,
-       ref: "Student",
-       default: []
-   }
+   teacher: {
+        type: Types.ObjectId,
+        ref: "Teacher",
+        required: true
+   },
+   students: [{
+        type: Types.ObjectId,
+        ref: "Student"
+   }]
 })
 
 

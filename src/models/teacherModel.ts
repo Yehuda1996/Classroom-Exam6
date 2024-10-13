@@ -41,9 +41,9 @@ const TeacherSchema = new Schema<ITeacher> ({
            'Password must contain at least one uppercase letter, one lowercase letter, and one number, and be at least 8 characters long']
    },
    class: {
-       type: ClassSchema,
-       required: [true, "Class is required"],
-       unique: true
+        type: Types.ObjectId,
+        ref: "Class",
+        required: true
    }
 });
 

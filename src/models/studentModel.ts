@@ -7,7 +7,8 @@ export interface IStudent extends Document {
    username: string;
    email: string;
    password: string,
-   class?: Types.ObjectId
+   class?: string,
+   grades: {grade: number}
 }
 
 
@@ -43,7 +44,13 @@ const StudentSchema = new Schema<IStudent> ({
        type: Types.ObjectId,
        ref: "Class",
        required: [true, "Providing a class is required"]
-   }
+   },
+   grades: [{
+        grade: {
+            type: Number,
+            required: true
+        }
+   }]
 })
 
 
