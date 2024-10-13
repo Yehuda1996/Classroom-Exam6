@@ -27,10 +27,19 @@ const router = express_1.default.Router();
  *               password:
  *                 type: string
  *                 minLength: 8
+ *               role:
+ *                  type: String,
+ *                  enum: Object.values(Role),
+ *                  required: true
+ *               class:
+ *                  type: Types.ObjectId,
+ *                  ref: "Class"
  *             required:
  *               - username
  *               - email
  *               - password
+ *               - role
+ *               - class
  *     responses:
  *       201:
  *         description: User registered successfully

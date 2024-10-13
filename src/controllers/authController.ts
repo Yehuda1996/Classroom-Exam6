@@ -4,14 +4,14 @@ import { Request, Response } from 'express';
 import userModel from '../models/userModel';
 
 export const register = async (req: Request, res: Response) => {
-    const {fullName, passportId, password, role} = req.body;
+    const {username, email, password, role, className} = req.body;
 
-    if(!fullName || !passportId || !password || !role){
+    if(!username || !email || !password || !role || !className){
          res.status(400).json({message: "All fields are required"});
     }
 
     try{
-        const existingUser = await userModel.findOne({passportId});
+        const existingUser = await userModel.findOne({email});
         if(existingUser){
             res.status(400).json({message: "User with this Passport ID already exists."});
         }
@@ -20,10 +20,11 @@ export const register = async (req: Request, res: Response) => {
 
         const newUser = new userModel(
             {
-                fullName,
-                passportId,
+                username,
+                email,
                 password: hashedPassword,
                 role,
+                className, 
                 grades: []
             }
         );

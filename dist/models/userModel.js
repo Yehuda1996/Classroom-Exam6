@@ -22,26 +22,33 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Role = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
+const validator_1 = __importDefault(require("validator"));
 var Role;
 (function (Role) {
     Role["Student"] = "student";
     Role["Teacher"] = "teacher";
 })(Role || (exports.Role = Role = {}));
 const UserSchema = new mongoose_1.Schema({
-    fullName: {
+    username: {
         type: String,
         required: [true, "Name is required"],
         trim: true,
     },
-    passportId: {
+    email: {
         type: String,
-        required: [true, "Passport ID is required"],
-        minLength: 9,
-        maxLength: 9,
-        match: /^[0-9]{9}$/,
+        required: [true, "Email is required"],
+        validate: {
+            validator: function (value) {
+                return validator_1.default.isEmail(value);
+            },
+            message: "Please provide valid email address"
+        }
     },
     password: {
         type: String,

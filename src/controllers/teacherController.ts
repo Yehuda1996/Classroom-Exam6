@@ -75,7 +75,7 @@ export const deleteGrade = async (req: Request, res: Response, next: NextFunctio
 
 export const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
     try{
-        const users = await userModel.find().populate('Class');
+        const users = await userModel.find().populate('class');
         res.status(200).json(new ResponseStructure(true, users))
     }
     catch(error:any){
@@ -87,7 +87,7 @@ export const getStudentsGrades = async (req: Request, res: Response, next: NextF
     const {studentId} = req.params;
     const studentIdStr = typeof studentId === 'string' ? studentId : String(studentId); 
     try{
-        const student = await userModel.findById(studentIdStr).populate("Class");
+        const student = await userModel.findById(studentIdStr).populate("class");
         if(!student || student.role !== Role.Student){
             res.status(404).json(new ResponseStructure(false, {}, "Student not found."))
         }
@@ -104,7 +104,7 @@ export const getStudentGradeAvg = async (req: Request, res: Response, next: Next
     const {studentId} = req.params;
     const studentIdStr = typeof studentId === 'string' ? studentId : String(studentId); 
     try{
-        const student = await userModel.findById(studentIdStr).populate("Class");
+        const student = await userModel.findById(studentIdStr).populate("class");
         if(!student || student.role !== Role.Student){
             res.status(404).json(new ResponseStructure(false, {}, "Student not found."))
         }

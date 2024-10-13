@@ -1,4 +1,5 @@
 import mongoose, { Schema, Document, Types } from "mongoose";
+import validator from "validator";
 
 export enum Role {
   Student = "student",
@@ -11,8 +12,8 @@ interface Grade {
 }
 
 export interface IUser extends Document {
-  fullName: string;
-  passportId: string;
+  username: string;
+  email: string;
   password: string;
   grades: Grade[];
   role: Role;
@@ -20,17 +21,20 @@ export interface IUser extends Document {
 }
 
 const UserSchema = new Schema<IUser>({
-  fullName: {
+  username: {
     type: String,
     required: [true, "Name is required"],
     trim: true,
   },
-  passportId: {
+  email: {
     type: String,
-    required: [true, "Passport ID is required"],
-    minLength: 9,
-    maxLength: 9,
-    match: /^[0-9]{9}$/,
+    required: [true, "Email is required"],
+    validate: {
+      validator: function (value: string){
+        return validator.isEmail(value);
+      },
+      message: "Please provide valid email address"
+    }
   },
   password: {
     type: String,

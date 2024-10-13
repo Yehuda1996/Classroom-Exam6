@@ -103,7 +103,7 @@ const deleteGrade = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
 exports.deleteGrade = deleteGrade;
 const getAllUsers = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const users = yield userModel_1.default.find().populate('Class');
+        const users = yield userModel_1.default.find().populate('class');
         res.status(200).json(new response_1.ResponseStructure(true, users));
     }
     catch (error) {
@@ -115,7 +115,7 @@ const getStudentsGrades = (req, res, next) => __awaiter(void 0, void 0, void 0, 
     const { studentId } = req.params;
     const studentIdStr = typeof studentId === 'string' ? studentId : String(studentId);
     try {
-        const student = yield userModel_1.default.findById(studentIdStr).populate("Class");
+        const student = yield userModel_1.default.findById(studentIdStr).populate("class");
         if (!student || student.role !== userModel_1.Role.Student) {
             res.status(404).json(new response_1.ResponseStructure(false, {}, "Student not found."));
         }
@@ -132,7 +132,7 @@ const getStudentGradeAvg = (req, res, next) => __awaiter(void 0, void 0, void 0,
     const { studentId } = req.params;
     const studentIdStr = typeof studentId === 'string' ? studentId : String(studentId);
     try {
-        const student = yield userModel_1.default.findById(studentIdStr).populate("Class");
+        const student = yield userModel_1.default.findById(studentIdStr).populate("class");
         if (!student || student.role !== userModel_1.Role.Student) {
             res.status(404).json(new response_1.ResponseStructure(false, {}, "Student not found."));
         }

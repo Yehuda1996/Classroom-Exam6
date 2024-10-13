@@ -17,21 +17,22 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const userModel_1 = __importDefault(require("../models/userModel"));
 const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { fullName, passportId, password, role } = req.body;
-    if (!fullName || !passportId || !password || !role) {
+    const { username, email, password, role, className } = req.body;
+    if (!username || !email || !password || !role || !className) {
         res.status(400).json({ message: "All fields are required" });
     }
     try {
-        const existingUser = yield userModel_1.default.findOne({ passportId });
+        const existingUser = yield userModel_1.default.findOne({ email });
         if (existingUser) {
             res.status(400).json({ message: "User with this Passport ID already exists." });
         }
         const hashedPassword = yield bcrypt_1.default.hash(password, 10);
         const newUser = new userModel_1.default({
-            fullName,
-            passportId,
+            username,
+            email,
             password: hashedPassword,
             role,
+            className,
             grades: []
         });
         yield newUser.save();
