@@ -5,22 +5,26 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const dotenv_1 = __importDefault(require("dotenv"));
-const errorHandler_js_1 = require("./middleware/errorHandler.js");
-const db_js_1 = __importDefault(require("./config/db.js"));
+const errorHandler_1 = require("./middleware/errorHandler");
+const db_1 = __importDefault(require("./config/db"));
 const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
-const swagger_js_1 = require("./swagger.js");
-const authRoute_js_1 = __importDefault(require("./routes/authRoute.js"));
+const swagger_1 = require("./swagger");
+//import authRouter from "./routes/authRoute"
+const teacherRoute_1 = __importDefault(require("./routes/teacherRoute"));
+const studentRoute_1 = __importDefault(require("./routes/studentRoute"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 // Middleware
 app.use(express_1.default.json());
-app.use('/swagger', swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swagger_js_1.swaggerSpec));
-(0, db_js_1.default)();
+app.use('/swagger', swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swagger_1.swaggerSpec));
+(0, db_1.default)();
 // Routes
-app.use('/auth', authRoute_js_1.default);
+//app.use('/auth', authRouter);
+app.use('/teacher', teacherRoute_1.default);
+app.use('/student', studentRoute_1.default);
 // Error handling middleware
-app.use(errorHandler_js_1.errorHandler);
+app.use(errorHandler_1.errorHandler);
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });

@@ -28,7 +28,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 const validator_1 = __importDefault(require("validator"));
-const classModel_1 = require("./classModel");
 const TeacherSchema = new mongoose_1.Schema({
     username: {
         type: String,
@@ -36,7 +35,6 @@ const TeacherSchema = new mongoose_1.Schema({
         unique: true,
         minlength: [3, "username must be at least 3 chars long"],
         maxlength: [30, "username cannot exceed 30 chars!"],
-        match: [/^[a-zA-Z0-9]+§/, "username can only contain letters and numbers"]
     },
     email: {
         type: String,
@@ -53,15 +51,11 @@ const TeacherSchema = new mongoose_1.Schema({
         type: String,
         required: [true, "Password is required"],
         minlength: [8, "password must be at least 8 characters long"],
-        match: [
-            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/,
-            'Password must contain at least one uppercase letter, one lowercase letter, and one number, and be at least 8 characters long'
-        ]
     },
     class: {
-        type: classModel_1.ClassSchema,
-        required: [true, "Class is required"],
-        unique: true
+        type: mongoose_1.Types.ObjectId,
+        ref: "Class",
+        required: [true, "Providing a class is required"]
     }
 });
 exports.default = mongoose_1.default.model("Teacher", TeacherSchema);

@@ -12,29 +12,27 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.login = void 0;
+exports.registerTeacher = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
-const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const teacherModel_1 = __importDefault(require("../models/teacherModel"));
-const studentModel_1 = __importDefault(require("../models/studentModel"));
+const classModel_1 = __importDefault(require("../models/classModel"));
 const response_1 = require("../types/response");
-const login = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const registerTeacher = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { email, password } = req.body;
-        const user = (yield teacherModel_1.default.findOne({ email })) || (yield studentModel_1.default.findOne({ email }));
-        if (!user) {
-            res.status(401).json({ error: "Invalid credentials" });
-        }
-        else {
-            const isUser = yield bcrypt_1.default.compare(password, user.password);
-            if (!isUser)
-                res.status(401).json({ error: "Invalid credentials" });
-            const token = jsonwebtoken_1.default.sign({ userId: user._id, role: user instanceof teacherModel_1.default ? 'teacher' : 'student' }, 'SECRET');
-            res.cookie('token', token).json(new response_1.ResponseStructure(true, token));
-        }
+        const { username, email, password, className } = req.body;
+        const hashedPassword = yield bcrypt_1.default.hash(password, 10);
+        const newClass = yield new classModel_1.default({ name: className });
+        const newTeacher = new teacherModel_1.default({
+            username,
+            email,
+            password: hashedPassword,
+            class: newClass
+        });
+        yield newTeacher.save();
+        res.status(201).json(new response_1.ResponseStructure(true, newTeacher));
     }
     catch (error) {
         next(error);
     }
 });
-exports.login = login;
+exports.registerTeacher = registerTeacher;

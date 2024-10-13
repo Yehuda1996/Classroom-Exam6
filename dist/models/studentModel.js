@@ -35,7 +35,6 @@ const StudentSchema = new mongoose_1.Schema({
         unique: true,
         minlength: [3, "username must be at least 3 chars long"],
         maxlength: [30, "username cannot exceed 30 chars!"],
-        match: [/^[a-zA-Z0-9]+§/, "username can only contain letters and numbers"]
     },
     email: {
         type: String,
@@ -52,15 +51,17 @@ const StudentSchema = new mongoose_1.Schema({
         type: String,
         required: [true, "Password is required"],
         minlength: [8, "password must be at least 8 characters long"],
-        match: [
-            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/,
-            'Password must contain at least one uppercase letter, one lowercase letter, and one number, and be at least 8 characters long'
-        ]
     },
     class: {
         type: mongoose_1.Types.ObjectId,
         ref: "Class",
         required: [true, "Providing a class is required"]
-    }
+    },
+    grades: [{
+            grade: {
+                type: Number,
+                required: true
+            }
+        }]
 });
 exports.default = mongoose_1.default.model("Student", StudentSchema);

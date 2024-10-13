@@ -1,6 +1,5 @@
 import mongoose, { Schema, Document, Types } from "mongoose";
 import validator from "validator";
-import { IClass, ClassSchema} from "./classModel";
 
 
 export interface ITeacher extends Document {
@@ -8,7 +7,7 @@ export interface ITeacher extends Document {
    username: string;
    email: string;
    password: string,
-   class: IClass
+   class?: string
 }
 
 
@@ -19,7 +18,6 @@ const TeacherSchema = new Schema<ITeacher> ({
        unique: true,
        minlength: [3, "username must be at least 3 chars long"],
        maxlength: [30, "username cannot exceed 30 chars!"],
-       match: [/^[a-zA-Z0-9]+§/, "username can only contain letters and numbers"]
    },
    email: {
        type: String,
@@ -36,16 +34,13 @@ const TeacherSchema = new Schema<ITeacher> ({
        type: String,
        required: [true, "Password is required"],
        minlength: [8, "password must be at least 8 characters long"],
-       match: [
-           /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/,
-           'Password must contain at least one uppercase letter, one lowercase letter, and one number, and be at least 8 characters long']
    },
    class: {
-        type: Types.ObjectId,
-        ref: "Class",
-        required: true
+       type: Types.ObjectId,
+       ref: "Class",
+       required: [true, "Providing a class is required"]
    }
-});
+})
 
 
 export default mongoose.model<ITeacher>("Teacher", TeacherSchema);

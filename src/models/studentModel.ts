@@ -19,7 +19,6 @@ const StudentSchema = new Schema<IStudent> ({
        unique: true,
        minlength: [3, "username must be at least 3 chars long"],
        maxlength: [30, "username cannot exceed 30 chars!"],
-       match: [/^[a-zA-Z0-9]+§/, "username can only contain letters and numbers"]
    },
    email: {
        type: String,
@@ -36,9 +35,6 @@ const StudentSchema = new Schema<IStudent> ({
        type: String,
        required: [true, "Password is required"],
        minlength: [8, "password must be at least 8 characters long"],
-       match: [
-           /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/,
-           'Password must contain at least one uppercase letter, one lowercase letter, and one number, and be at least 8 characters long']
    },
    class: {
        type: Types.ObjectId,

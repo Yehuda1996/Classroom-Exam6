@@ -6,39 +6,25 @@ import Student, { IStudent } from '../models/studentModel';
 import { ResponseStructure } from '../types/response';
 
 
-export const registerTeacher = async (req: Request, res: Response, next: NextFunction) => {
-   try{
-       const teacher: ITeacher = await Teacher.create(req.body);
+export const login = async (req: Request, res:Response, next: NextFunction) => {
+    try{
+        const {email, password} = req.body;
 
-
-       const hashedPassword = await bcrypt.hash(teacher.password, 10);
-
-
-       const response: ResponseStructure = new ResponseStructure(true, teacher);
-
-
-       res.status(201).json({message: "New classroom created successfully", teacher: teacher});
-   }
-   catch(error){
-       next(error)
-   }
-};
-
-
-export const registerStudent = async (req: Request, res: Response, next: NextFunction) => {
-   try{
-       const student: IStudent = await Student.create(req.body);
-
-
-       const hashedPassword = await bcrypt.hash(student.password, 10);
-
-
-       const response: ResponseStructure = new ResponseStructure(true, student);
-
-
-       res.status(201).json({message: "New student created successfully", student: student});
-   }
-   catch(error){
-       next(error)
-   }
-};
+        const user: IStudent | ITeacher | null = await Teacher.findOne({email}) || await Student.findOne({email});
+        if(!user){
+            res.status(401).json({error: "Invalid credentials"});
+        }
+        else{
+            const isUser = await bcrypt.compare(password, user.password);
+            if(!isUser) res.status(401).json({error: "Invalid credentials"});
+            const token = jwt.sign(
+                {userId: user._id, role: user instanceof Teacher? 'teacher': 'student'},
+                'SECRET'
+            );
+            res.cookie('token', token).json(new ResponseStructure(true, token));
+        }
+    }
+    catch(error){
+        next(error)
+    }
+}

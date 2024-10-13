@@ -31,10 +31,14 @@ exports.ClassSchema = new mongoose_1.Schema({
         required: [true, "Classroom name is required"],
         unique: true
     },
-    students: {
+    teacher: {
         type: mongoose_1.Types.ObjectId,
-        ref: "Student",
-        default: []
-    }
+        ref: "Teacher",
+        required: true
+    },
+    students: [{
+            type: mongoose_1.Types.ObjectId,
+            ref: "Student"
+        }]
 });
 exports.default = mongoose_1.default.model("Class", exports.ClassSchema);
