@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
-import userModel, {Role} from "../models/userModel.js";
-import { ResponseStructure } from "../types/response.js";
+import userModel, {Role} from "../models/userModel";
+import { ResponseStructure } from "../types/response";
 
 
 export const addGrade = async (req: Request, res: Response, next: NextFunction) => {

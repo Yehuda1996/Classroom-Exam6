@@ -12,29 +12,63 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.login = void 0;
+exports.login = exports.register = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const teacherModel_1 = __importDefault(require("../models/teacherModel"));
-const studentModel_1 = __importDefault(require("../models/studentModel"));
-const response_1 = require("../types/response");
-const login = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const userModel_1 = __importDefault(require("../models/userModel"));
+const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { fullName, passportId, password, role } = req.body;
+    if (!fullName || !passportId || !password || !role) {
+        res.status(400).json({ message: "All fields are required" });
+    }
     try {
-        const { email, password } = req.body;
-        const user = (yield teacherModel_1.default.findOne({ email })) || (yield studentModel_1.default.findOne({ email }));
+        const existingUser = yield userModel_1.default.findOne({ passportId });
+        if (existingUser) {
+            res.status(400).json({ message: "User with this Passport ID already exists." });
+        }
+        const hashedPassword = yield bcrypt_1.default.hash(password, 10);
+        const newUser = new userModel_1.default({
+            fullName,
+            passportId,
+            password: hashedPassword,
+            role,
+            grades: []
+        });
+        yield newUser.save();
+        res.status(201).json({ message: "User registered successfully", user: newUser });
+    }
+    catch (error) {
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
+});
+exports.register = register;
+const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { passportId, password } = req.body;
+    if (!passportId || !password) {
+        res.status(400).json({ message: "Passport ID and password are required." });
+    }
+    try {
+        const user = yield userModel_1.default.findOne({ passportId });
         if (!user) {
-            res.status(401).json({ error: "Invalid credentials" });
+            res.status(404).json({ message: "User not found." });
         }
         else {
-            const isUser = yield bcrypt_1.default.compare(password, user.password);
-            if (!isUser)
-                res.status(401).json({ error: "Invalid credentials" });
-            const token = jsonwebtoken_1.default.sign({ userId: user._id, role: user instanceof teacherModel_1.default ? 'teacher' : 'student' }, 'SECRET');
-            res.cookie('token', token).json(new response_1.ResponseStructure(true, token));
+            const isPasswordValid = yield bcrypt_1.default.compare(password, user.password);
+            if (!isPasswordValid) {
+                res.status(400).json({ message: 'Invalid password' });
+            }
+            const token = jsonwebtoken_1.default.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
+            res.cookie('auth_token', token, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'strict',
+                maxAge: 3600000
+            });
+            res.status(200).json({ message: "Login successful", token });
         }
     }
     catch (error) {
-        next(error);
+        res.status(500).json({ message: "Server error", error: error.message });
     }
 });
 exports.login = login;

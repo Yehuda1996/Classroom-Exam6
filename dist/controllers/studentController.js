@@ -12,31 +12,39 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.registerStudent = void 0;
-const bcrypt_1 = __importDefault(require("bcrypt"));
-const studentModel_1 = __importDefault(require("../models/studentModel"));
-const classModel_1 = __importDefault(require("../models/classModel"));
-const response_1 = require("../types/response");
-const registerStudent = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+exports.getAverageGrade = exports.getMyGrades = void 0;
+const userModel_1 = __importDefault(require("../models/userModel"));
+const getMyGrades = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     try {
-        const { username, email, password, className } = req.body;
-        const hashedPassword = yield bcrypt_1.default.hash(password, 10);
-        const newClass = yield new classModel_1.default({ name: className });
-        const findCLass = yield classModel_1.default.findOne({ newClass });
-        if (!findCLass) {
-            res.status(400).json(new response_1.ResponseStructure(false, {}, "Class doesn't exist"));
+        const user = yield userModel_1.default.findById((_a = req.user) === null || _a === void 0 ? void 0 : _a.id);
+        if (!user) {
+            res.status(404).json({ message: "User not found" });
         }
-        const newStudent = new studentModel_1.default({
-            username,
-            email,
-            password: hashedPassword,
-            class: newClass
-        });
-        yield newStudent.save();
-        res.status(201).json(new response_1.ResponseStructure(true, newStudent));
+        else {
+            res.status(200).json({ grades: user.grades, success: true });
+        }
     }
     catch (error) {
-        next(error);
+        res.status(500).json({ message: error.message, success: false });
     }
 });
-exports.registerStudent = registerStudent;
+exports.getMyGrades = getMyGrades;
+const getAverageGrade = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    try {
+        const user = yield userModel_1.default.findById((_a = req.user) === null || _a === void 0 ? void 0 : _a.id);
+        if (!user) {
+            res.status(404).json({ message: "User not found" });
+        }
+        else {
+            const grades = user.grades.map(g => g.grade);
+            const avg = grades.length ? grades.reduce((acc, grade) => acc + grade, 0) / grades.length : 0;
+            res.status(200).json({ avg });
+        }
+    }
+    catch (error) {
+        res.status(500).json({ message: error.message, success: false });
+    }
+});
+exports.getAverageGrade = getAverageGrade;

@@ -1,5 +1,5 @@
 import {Request, Response} from "express";
-import userModel from "../models/userModel.js";
+import userModel from "../models/userModel";
 
 
 export const getMyGrades = async (req: Request, res: Response) => {

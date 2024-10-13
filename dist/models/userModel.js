@@ -23,23 +23,41 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Role = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
-const ClassSchema = new mongoose_1.Schema({
-    name: {
+var Role;
+(function (Role) {
+    Role["Student"] = "student";
+    Role["Teacher"] = "teacher";
+})(Role || (exports.Role = Role = {}));
+const UserSchema = new mongoose_1.Schema({
+    fullName: {
         type: String,
-        required: true,
-        unique: true,
+        required: [true, "Name is required"],
+        trim: true,
     },
-    teacher: {
+    passportId: {
+        type: String,
+        required: [true, "Passport ID is required"],
+        minLength: 9,
+        maxLength: 9,
+        match: /^[0-9]{9}$/,
+    },
+    password: {
+        type: String,
+        required: [true, "Password is required"],
+    },
+    grades: {
+        type: [{ subject: { type: String }, grade: { type: Number } }],
+    },
+    role: {
+        type: String,
+        enum: Object.values(Role),
+        required: true,
+    },
+    class: {
         type: mongoose_1.Types.ObjectId,
-        ref: "User", // Reference to User model (Teacher)
-        required: true,
-    },
-    students: [
-        {
-            type: mongoose_1.Types.ObjectId,
-            ref: "User", // Reference to User model (Students)
-        },
-    ],
+        ref: "Class"
+    }
 });
-exports.default = mongoose_1.default.model("Class", ClassSchema);
+exports.default = mongoose_1.default.model("User", UserSchema);

@@ -4,9 +4,9 @@ import { errorHandler } from "./middleware/errorHandler";
 import connectDB from "./config/db";
 import swaggerUi from "swagger-ui-express";
 import {swaggerSpec} from "./swagger";
-//import authRouter from "./routes/authRoute"
-import teacherRouter from "./routes/teacherRoute";
-import studentRouter from './routes/studentRoute';
+import authRouter from "./routes/authRoutes";
+import teacherRouter from "./routes/teacherRoutes";
+import studentRouter from './routes/studentRoutes';
 
 
 dotenv.config();
@@ -23,7 +23,7 @@ connectDB();
 
 
 // Routes
-//app.use('/auth', authRouter);
+app.use('/auth', authRouter);
 app.use('/teacher', teacherRouter);
 app.use('/student', studentRouter);
 
